@@ -54,10 +54,41 @@ func parseLines(lines []string) []Data {
 	return result
 }
 
-func main() {
-	filePath := "./input.txt"
+func isValid(data Data) bool {
+	count := 0
+	for _, letter := range data.text {
+		if string(letter) == data.letter {
+			count += 1
+		}
+	}
+	if count < data.low || count > data.high {
+		return false
+	}
+	return true
+}
+
+func countValids(lines [] Data) int {
+	countOfValidCases := 0
+	for _, line := range lines {
+		valid := isValid(line)
+		if valid {
+			countOfValidCases += 1
+		}
+	}
+	return countOfValidCases
+}
+
+func getDay2ValidCounts(filePath string) int {
 	text := readFile(filePath)
+	fmt.Println(text)
 	lines := strings.Split(text, "\n")
 	data := parseLines(lines)
-	fmt.Println(data)
+	validCount := countValids(data)
+	return validCount
+}
+
+func main() {
+	filePath := "./input.txt"
+	validCount := getDay2ValidCounts(filePath)
+	fmt.Println(validCount)
 }
