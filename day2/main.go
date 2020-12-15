@@ -54,7 +54,7 @@ func parseLines(lines []string) []Data {
 	return result
 }
 
-func isValid(data Data) bool {
+func isValidPart1(data Data) bool {
 	count := 0
 	for _, letter := range data.text {
 		if string(letter) == data.letter {
@@ -65,6 +65,20 @@ func isValid(data Data) bool {
 		return false
 	}
 	return true
+}
+
+func isValid(data Data) bool {
+	position1 := data.low - 1
+	position2 := data.high - 1
+	letter := data.letter
+	text := data.text
+	t1 := string(text[position1]) == letter
+	t2 := string(text[position2]) == letter
+	if (t1 && !t2) || (t2 && !t1) {
+		return true
+	}else{
+		return false
+	}
 }
 
 func countValids(lines [] Data) int {
