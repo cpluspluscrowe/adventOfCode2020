@@ -80,7 +80,6 @@ func countValids(lines [] Data) int {
 
 func getDay2ValidCounts(filePath string) int {
 	text := readFile(filePath)
-	fmt.Println(text)
 	lines := strings.Split(text, "\n")
 	data := parseLines(lines)
 	validCount := countValids(data)
