@@ -37,7 +37,7 @@ func joinTreeMappings(lines []string) map[int]map[int]bool {
 }
 
 type TobogganPath struct {
-	starting, right, down int
+	right, down int
 }
 
 type Position struct {
@@ -46,7 +46,7 @@ type Position struct {
 
 func createTobogganPath(tp TobogganPath, depth int) []Position {
 	willVisit := []Position{}
-	rightShift := tp.starting
+	rightShift := 0
 	downShift := 0
 	for downShift < depth {
 		rightShift += tp.right
@@ -72,20 +72,31 @@ func countTreeHits(tpPath []Position, trees map[int]map[int]bool, width int) int
 	return hitTreeCount
 }
 
+func multipleTreeHitsForSlopes(slopes []TobogganPath, trees map[int]map[int]bool, depth int, width int) int {
+	multipliedTreeHits := 1
+	for _, tp := range slopes {
+		tpPath := createTobogganPath(tp, depth)
+		hitTreeCount := countTreeHits(tpPath, trees, width)
+		fmt.Println(hitTreeCount)
+		multipliedTreeHits *= hitTreeCount
+	}
+	return multipliedTreeHits
+}
+
 func getDay3TreeHitCount(filePath string) int {
-	tp := TobogganPath{0, 3, 1}
 	text := readFile(filePath)
 	lines := strings.Split(text, "\n")
 	width := len(lines[0])
 	trees := joinTreeMappings(lines)
 	depth := len(trees)
-	tpPath := createTobogganPath(tp, depth)
-	hitTreeCount := countTreeHits(tpPath, trees, width)
-	return hitTreeCount
+	fmt.Println(depth, width)
+	slopesToCheck := []TobogganPath{TobogganPath{1, 1},TobogganPath{3,  1},TobogganPath{5,  1},TobogganPath{7,  1},TobogganPath{1,  2}}
+	multipliedTreeHits := multipleTreeHitsForSlopes(slopesToCheck, trees, depth, width)
+	return multipliedTreeHits
 }
 
 func main() {
 	filePath := "./input.txt"
-	hitTreeCount := getDay3TreeHitCount(filePath)
-	fmt.Println(hitTreeCount)
+	multipliedTreeHits := getDay3TreeHitCount(filePath)
+	fmt.Println(multipliedTreeHits)
 }
