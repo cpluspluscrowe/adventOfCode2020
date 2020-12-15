@@ -72,8 +72,7 @@ func countTreeHits(tpPath []Position, trees map[int]map[int]bool, width int) int
 	return hitTreeCount
 }
 
-func main() {
-	filePath := "./input.txt"
+func getDay3TreeHitCount(filePath string) int {
 	tp := TobogganPath{0, 3, 1}
 	text := readFile(filePath)
 	lines := strings.Split(text, "\n")
@@ -82,5 +81,11 @@ func main() {
 	depth := len(trees)
 	tpPath := createTobogganPath(tp, depth)
 	hitTreeCount := countTreeHits(tpPath, trees, width)
+	return hitTreeCount
+}
+
+func main() {
+	filePath := "./input.txt"
+	hitTreeCount := getDay3TreeHitCount(filePath)
 	fmt.Println(hitTreeCount)
 }
