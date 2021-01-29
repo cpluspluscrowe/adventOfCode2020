@@ -31,7 +31,6 @@ type OuterBag struct {
 }
 
 func parseInnerBag(line string) BagReference {
-	//3 faded blue bags
 	number := strings.Split(line, " ")[0]
 	count := convertToNumber(number)
 	remainder := strings.Trim(strings.Replace(line, number, "", 1), " ")
@@ -41,8 +40,9 @@ func parseInnerBag(line string) BagReference {
 }
 
 func parseLine(line string) OuterBag {
-	zeroTo0 := strings.Replace(strings.Replace(line, "no", "0", 1), ".", "", 1)
-	toSplitOn := " bags contain "
+	bagsToBag := strings.Replace(line, "bags", "bag", -1)
+	zeroTo0 := strings.Replace(strings.Replace(bagsToBag, "no", "0", 1), ".", "", 1)
+	toSplitOn := " contain "
 	bagColorAndDetails := strings.Split(zeroTo0, toSplitOn)
 	bag := OuterBag{}
 	bag.color = bagColorAndDetails[0]
@@ -64,11 +64,48 @@ func parseLines(lines []string) []OuterBag {
 	return result
 }
 
+func createBagMap(bagContents []OuterBag) map[string]OuterBag {
+	bagMap := make(map[string]OuterBag)
+	for _, outerBag := range bagContents {
+		color := outerBag.color
+		bagMap[color] = outerBag
+	}
+	return bagMap
+}
+
+func canContainYellowBags(bagColor string, bagMap map[string]OuterBag) bool {
+	if bagColor == "shiny gold bag" {
+		return true
+	}
+	outerBag := bagMap[bagColor] // throw error if this does not exist
+	goldBagCount := 0
+	for _, innerBag := range outerBag.contains {
+		if canContainYellowBags(innerBag.color, bagMap) { // * innerBag.count
+			goldBagCount += 1
+		}
+	}
+	return goldBagCount > 0
+}
+
+func searchOuterBags(outerBags []OuterBag, bagMap map[string]OuterBag) int {
+	goldBagCount := 0
+	for _, outerBag := range outerBags {
+		if outerBag.color != "shiny gold bag" {
+			if canContainYellowBags(outerBag.color, bagMap) {
+				goldBagCount += 1
+			}
+		}
+	}
+	return goldBagCount
+}
+
 func main() {
 	var filePath string = "./input.txt"
 	var text string = readFile(filePath)
 	var lines []string = strings.Split(text, "\n")
 	var removeLastLine []string = lines[:len(lines)-1]
 	outerBags := parseLines(removeLastLine)
-	fmt.Println(outerBags)
+	bagMap := createBagMap(outerBags)
+	goldBagCount := searchOuterBags(outerBags, bagMap)
+	fmt.Println(goldBagCount)
 }
